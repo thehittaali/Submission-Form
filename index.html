@@ -6,7 +6,6 @@
   <title>Web Chat Implementation — Submission Form</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f5f3;
@@ -17,27 +16,19 @@
       padding: 2rem 1rem;
       color: #1a1a1a;
     }
-
     .container { width: 100%; max-width: 480px; }
-
     .brand { text-align: center; margin-bottom: 1.75rem; }
     .brand-name { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #999; }
     .brand-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-top: 4px; }
-
     .progress-bar { display: flex; gap: 6px; margin-bottom: 1.5rem; }
     .pip { height: 3px; flex: 1; border-radius: 99px; background: #e0e0e0; transition: background 0.3s; }
     .pip.active { background: #1a1a1a; }
-
     .card { background: #fff; border-radius: 16px; border: 1px solid #e8e8e8; padding: 2rem; }
-
     .step { display: none; }
     .step.active { display: block; }
-
     .step-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 6px; }
     .step-heading { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 1.5rem; }
-
     label.field-label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 7px; }
-
     input[type="text"] {
       width: 100%; padding: 10px 14px; border: 1px solid #ddd;
       border-radius: 10px; font-size: 15px; color: #1a1a1a;
@@ -46,9 +37,7 @@
     }
     input[type="text"]:focus { border-color: #1a1a1a; background: #fff; }
     input[type="text"]::placeholder { color: #bbb; }
-
     .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
     .option-btn {
       background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px;
       padding: 1rem; cursor: pointer; text-align: left;
@@ -56,13 +45,10 @@
     }
     .option-btn:hover { border-color: #ccc; background: #f5f5f5; }
     .option-btn.selected { border: 1.5px solid #1a1a1a; background: #f0f0f0; }
-
     .option-emoji { font-size: 22px; display: block; margin-bottom: 8px; }
     .option-label { font-size: 14px; font-weight: 600; color: #1a1a1a; display: block; }
     .option-sub { font-size: 12px; color: #aaa; display: block; margin-top: 2px; }
-
     .recip-grid { display: grid; gap: 10px; }
-
     .recip-btn {
       background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px;
       padding: 0.9rem 1rem; cursor: pointer; display: flex; align-items: center;
@@ -70,7 +56,6 @@
     }
     .recip-btn:hover { border-color: #ccc; background: #f5f5f5; }
     .recip-btn.selected { border: 1.5px solid #1a1a1a; background: #f0f0f0; }
-
     .avatar {
       width: 38px; height: 38px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -78,25 +63,20 @@
     }
     .av-a { background: #dbeafe; color: #1d4ed8; }
     .av-b { background: #dcfce7; color: #15803d; }
-
     .recip-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
     .recip-email { font-size: 12px; color: #aaa; margin-top: 1px; }
-
     .summary { margin-top: 1.25rem; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 10px; overflow: hidden; }
     .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
     .summary-row:last-child { border-bottom: none; }
     .summary-key { color: #aaa; }
     .summary-val { font-weight: 600; color: #1a1a1a; }
-
     .nav-row { display: flex; gap: 10px; margin-top: 1.5rem; }
-
     .btn-back {
       background: transparent; border: 1px solid #e8e8e8; color: #888;
       border-radius: 10px; padding: 0.6rem 1rem; cursor: pointer;
       font-size: 14px; font-family: inherit; transition: border-color 0.15s;
     }
     .btn-back:hover { border-color: #ccc; color: #1a1a1a; }
-
     .btn-next {
       flex: 1; background: #fff; border: 1px solid #ddd; color: #1a1a1a;
       border-radius: 10px; padding: 0.65rem 1rem; cursor: pointer;
@@ -104,7 +84,6 @@
     }
     .btn-next:hover { background: #f5f5f5; }
     .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
-
     .btn-submit {
       flex: 1; background: #1a1a1a; border: none; color: #fff;
       border-radius: 10px; padding: 0.65rem 1rem; cursor: pointer;
@@ -112,19 +91,16 @@
     }
     .btn-submit:hover { background: #333; }
     .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
-
     .success-wrap { text-align: center; padding: 1.5rem 0; }
     .success-emoji { font-size: 40px; display: block; margin-bottom: 1rem; }
     .success-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
     .success-sub { font-size: 14px; color: #aaa; margin-bottom: 1.5rem; line-height: 1.6; }
-
     .btn-reset {
       background: #f5f5f5; border: 1px solid #e8e8e8; color: #1a1a1a;
       border-radius: 10px; padding: 0.65rem 1.5rem; cursor: pointer;
       font-size: 14px; font-weight: 600; font-family: inherit;
     }
     .btn-reset:hover { background: #eee; }
-
     @media (max-width: 400px) {
       .card { padding: 1.5rem; }
       .option-grid { grid-template-columns: 1fr; }
@@ -264,18 +240,38 @@
   }
 
   function submitForm() {
-    var subject = encodeURIComponent('Web Chat Implementation: ' + state.name + ' (' + state.type + ' Client)');
-    var body = encodeURIComponent(
-      'Web Chat Implementation Submission\n\n' +
-      'Client Name: ' + state.name + '\n' +
-      'Client Type: ' + state.type + ' Client\n\n' +
-      'Submitted via Dealership Accelerator.'
-    );
-    window.location.href = 'mailto:' + state.recipEmail + '?subject=' + subject + '&body=' + body;
-    document.getElementById('step3').classList.remove('active');
-    document.getElementById('stepDone').classList.add('active');
-    document.getElementById('doneMsg').textContent =
-      'Email draft opened for ' + state.recipName + ' (' + state.recipEmail + ').';
+    document.getElementById('btnSubmit').disabled = true;
+    document.getElementById('btnSubmit').textContent = 'Sending...';
+
+    var formData = new FormData();
+    formData.append('Client Name', state.name);
+    formData.append('Client Type', state.type + ' Client');
+    formData.append('Send To', state.recipName + ' (' + state.recipEmail + ')');
+    formData.append('_replyto', state.recipEmail);
+    formData.append('_subject', 'Web Chat Implementation: ' + state.name + ' (' + state.type + ' Client)');
+
+    fetch('https://formspree.io/f/xaqgevqy', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(response) {
+      if (response.ok) {
+        document.getElementById('step3').classList.remove('active');
+        document.getElementById('stepDone').classList.add('active');
+        document.getElementById('doneMsg').textContent =
+          'Sent to ' + state.recipName + ' (' + state.recipEmail + ') for ' + state.name + '.';
+      } else {
+        alert('Something went wrong. Please try again.');
+        document.getElementById('btnSubmit').disabled = false;
+        document.getElementById('btnSubmit').textContent = '✉ Send submission';
+      }
+    })
+    .catch(function() {
+      alert('Network error. Please try again.');
+      document.getElementById('btnSubmit').disabled = false;
+      document.getElementById('btnSubmit').textContent = '✉ Send submission';
+    });
   }
 
   function resetForm() {
@@ -284,6 +280,7 @@
     document.getElementById('next1').disabled = true;
     document.getElementById('next2').disabled = true;
     document.getElementById('btnSubmit').disabled = true;
+    document.getElementById('btnSubmit').textContent = '✉ Send submission';
     ['btn-legacy','btn-new','btn-ali','btn-abd'].forEach(function(id) {
       document.getElementById(id).classList.remove('selected');
     });
