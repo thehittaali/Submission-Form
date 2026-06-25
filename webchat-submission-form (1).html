@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Chat Implementation — Submission Form</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: #1a1a1a;
+    }
+
+    .container { width: 100%; max-width: 480px; }
+
+    .brand { text-align: center; margin-bottom: 1.75rem; }
+    .brand-name { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #999; }
+    .brand-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-top: 4px; }
+
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+    .pip { height: 3px; flex: 1; border-radius: 99px; background: #e0e0e0; transition: background 0.3s; }
+    .pip.active { background: #1a1a1a; }
+
+    .card { background: #fff; border-radius: 16px; border: 1px solid #e8e8e8; padding: 2rem; }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .step-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 6px; }
+    .step-heading { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 1.5rem; }
+
+    label.field-label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 7px; }
+
+    input[type="text"] {
+      width: 100%; padding: 10px 14px; border: 1px solid #ddd;
+      border-radius: 10px; font-size: 15px; color: #1a1a1a;
+      outline: none; transition: border-color 0.15s;
+      font-family: inherit; background: #fafafa;
+    }
+    input[type="text"]:focus { border-color: #1a1a1a; background: #fff; }
+    input[type="text"]::placeholder { color: #bbb; }
+
+    .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .option-btn {
+      background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px;
+      padding: 1rem; cursor: pointer; text-align: left;
+      transition: border-color 0.15s, background 0.15s; font-family: inherit;
+    }
+    .option-btn:hover { border-color: #ccc; background: #f5f5f5; }
+    .option-btn.selected { border: 1.5px solid #1a1a1a; background: #f0f0f0; }
+
+    .option-emoji { font-size: 22px; display: block; margin-bottom: 8px; }
+    .option-label { font-size: 14px; font-weight: 600; color: #1a1a1a; display: block; }
+    .option-sub { font-size: 12px; color: #aaa; display: block; margin-top: 2px; }
+
+    .recip-grid { display: grid; gap: 10px; }
+
+    .recip-btn {
+      background: #fafafa; border: 1px solid #e8e8e8; border-radius: 12px;
+      padding: 0.9rem 1rem; cursor: pointer; display: flex; align-items: center;
+      gap: 12px; font-family: inherit; transition: border-color 0.15s, background 0.15s; text-align: left;
+    }
+    .recip-btn:hover { border-color: #ccc; background: #f5f5f5; }
+    .recip-btn.selected { border: 1.5px solid #1a1a1a; background: #f0f0f0; }
+
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .av-a { background: #dbeafe; color: #1d4ed8; }
+    .av-b { background: #dcfce7; color: #15803d; }
+
+    .recip-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .recip-email { font-size: 12px; color: #aaa; margin-top: 1px; }
+
+    .summary { margin-top: 1.25rem; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 10px; overflow: hidden; }
+    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key { color: #aaa; }
+    .summary-val { font-weight: 600; color: #1a1a1a; }
+
+    .nav-row { display: flex; gap: 10px; margin-top: 1.5rem; }
+
+    .btn-back {
+      background: transparent; border: 1px solid #e8e8e8; color: #888;
+      border-radius: 10px; padding: 0.6rem 1rem; cursor: pointer;
+      font-size: 14px; font-family: inherit; transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: #ccc; color: #1a1a1a; }
+
+    .btn-next {
+      flex: 1; background: #fff; border: 1px solid #ddd; color: #1a1a1a;
+      border-radius: 10px; padding: 0.65rem 1rem; cursor: pointer;
+      font-size: 14px; font-weight: 600; font-family: inherit; transition: background 0.15s;
+    }
+    .btn-next:hover { background: #f5f5f5; }
+    .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .btn-submit {
+      flex: 1; background: #1a1a1a; border: none; color: #fff;
+      border-radius: 10px; padding: 0.65rem 1rem; cursor: pointer;
+      font-size: 14px; font-weight: 600; font-family: inherit; transition: background 0.15s;
+    }
+    .btn-submit:hover { background: #333; }
+    .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .success-wrap { text-align: center; padding: 1.5rem 0; }
+    .success-emoji { font-size: 40px; display: block; margin-bottom: 1rem; }
+    .success-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+    .success-sub { font-size: 14px; color: #aaa; margin-bottom: 1.5rem; line-height: 1.6; }
+
+    .btn-reset {
+      background: #f5f5f5; border: 1px solid #e8e8e8; color: #1a1a1a;
+      border-radius: 10px; padding: 0.65rem 1.5rem; cursor: pointer;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+    }
+    .btn-reset:hover { background: #eee; }
+
+    @media (max-width: 400px) {
+      .card { padding: 1.5rem; }
+      .option-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="brand">
+    <div class="brand-name">Dealership Accelerator</div>
+    <div class="brand-title">Web Chat Implementation</div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="pip active" id="p1"></div>
+    <div class="pip" id="p2"></div>
+    <div class="pip" id="p3"></div>
+  </div>
+
+  <div class="card">
+
+    <div class="step active" id="step1">
+      <div class="step-eyebrow">Step 1 of 3</div>
+      <div class="step-heading">Client name</div>
+      <label class="field-label" for="clientName">Dealership / client name</label>
+      <input type="text" id="clientName" placeholder="e.g. MB of Covington" oninput="validateStep1()" />
+      <div class="nav-row">
+        <button class="btn-next" id="next1" onclick="goTo(2)" disabled>Continue &rarr;</button>
+      </div>
+    </div>
+
+    <div class="step" id="step2">
+      <div class="step-eyebrow">Step 2 of 3</div>
+      <div class="step-heading">Client type</div>
+      <div class="option-grid">
+        <button class="option-btn" id="btn-legacy" onclick="selectType('Legacy')">
+          <span class="option-emoji">🕐</span>
+          <span class="option-label">Legacy</span>
+          <span class="option-sub">Existing client</span>
+        </button>
+        <button class="option-btn" id="btn-new" onclick="selectType('New')">
+          <span class="option-emoji">✨</span>
+          <span class="option-label">New client</span>
+          <span class="option-sub">First-time onboard</span>
+        </button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goTo(1)">&larr; Back</button>
+        <button class="btn-next" id="next2" onclick="goTo(3)" disabled>Continue &rarr;</button>
+      </div>
+    </div>
+
+    <div class="step" id="step3">
+      <div class="step-eyebrow">Step 3 of 3</div>
+      <div class="step-heading">Send to</div>
+      <div class="recip-grid">
+        <button class="recip-btn" id="btn-ali" onclick="selectRecip('Ali','ali@dealershipaccelerator.io')">
+          <div class="avatar av-a">AK</div>
+          <div>
+            <div class="recip-name">Ali</div>
+            <div class="recip-email">ali@dealershipaccelerator.io</div>
+          </div>
+        </button>
+        <button class="recip-btn" id="btn-abd" onclick="selectRecip('Abdulmuizz','abdulmuizz@dealershipaccelerator.io')">
+          <div class="avatar av-b">AM</div>
+          <div>
+            <div class="recip-name">Abdulmuizz</div>
+            <div class="recip-email">abdulmuizz@dealershipaccelerator.io</div>
+          </div>
+        </button>
+      </div>
+
+      <div class="summary" id="summaryBlock" style="display:none;">
+        <div class="summary-row"><span class="summary-key">Client</span><span class="summary-val" id="sumName">—</span></div>
+        <div class="summary-row"><span class="summary-key">Type</span><span class="summary-val" id="sumType">—</span></div>
+        <div class="summary-row"><span class="summary-key">To</span><span class="summary-val" id="sumRecip">—</span></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="goTo(2)">&larr; Back</button>
+        <button class="btn-submit" id="btnSubmit" onclick="submitForm()" disabled>&#9993; Send submission</button>
+      </div>
+    </div>
+
+    <div class="step" id="stepDone">
+      <div class="success-wrap">
+        <span class="success-emoji">✅</span>
+        <div class="success-title">Submitted</div>
+        <div class="success-sub" id="doneMsg">Your submission has been sent.</div>
+        <button class="btn-reset" onclick="resetForm()">Submit another</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var state = { name: '', type: '', recipName: '', recipEmail: '' };
+  var currentStep = 1;
+
+  function goTo(n) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    document.getElementById('step' + n).classList.add('active');
+    currentStep = n;
+    updateProgress(n);
+  }
+
+  function updateProgress(n) {
+    for (var i = 1; i <= 3; i++) {
+      document.getElementById('p' + i).classList.toggle('active', i <= n);
+    }
+  }
+
+  function validateStep1() {
+    state.name = document.getElementById('clientName').value.trim();
+    document.getElementById('next1').disabled = state.name.length === 0;
+  }
+
+  function selectType(t) {
+    state.type = t;
+    document.getElementById('btn-legacy').classList.toggle('selected', t === 'Legacy');
+    document.getElementById('btn-new').classList.toggle('selected', t === 'New');
+    document.getElementById('next2').disabled = false;
+  }
+
+  function selectRecip(name, email) {
+    state.recipName = name;
+    state.recipEmail = email;
+    document.getElementById('btn-ali').classList.toggle('selected', name === 'Ali');
+    document.getElementById('btn-abd').classList.toggle('selected', name === 'Abdulmuizz');
+    document.getElementById('sumName').textContent = state.name;
+    document.getElementById('sumType').textContent = state.type + ' client';
+    document.getElementById('sumRecip').textContent = email;
+    document.getElementById('summaryBlock').style.display = 'block';
+    document.getElementById('btnSubmit').disabled = false;
+  }
+
+  function submitForm() {
+    var subject = encodeURIComponent('Web Chat Implementation: ' + state.name + ' (' + state.type + ' Client)');
+    var body = encodeURIComponent(
+      'Web Chat Implementation Submission\n\n' +
+      'Client Name: ' + state.name + '\n' +
+      'Client Type: ' + state.type + ' Client\n\n' +
+      'Submitted via Dealership Accelerator.'
+    );
+    window.location.href = 'mailto:' + state.recipEmail + '?subject=' + subject + '&body=' + body;
+    document.getElementById('step3').classList.remove('active');
+    document.getElementById('stepDone').classList.add('active');
+    document.getElementById('doneMsg').textContent =
+      'Email draft opened for ' + state.recipName + ' (' + state.recipEmail + ').';
+  }
+
+  function resetForm() {
+    state = { name: '', type: '', recipName: '', recipEmail: '' };
+    document.getElementById('clientName').value = '';
+    document.getElementById('next1').disabled = true;
+    document.getElementById('next2').disabled = true;
+    document.getElementById('btnSubmit').disabled = true;
+    ['btn-legacy','btn-new','btn-ali','btn-abd'].forEach(function(id) {
+      document.getElementById(id).classList.remove('selected');
+    });
+    document.getElementById('summaryBlock').style.display = 'none';
+    document.getElementById('stepDone').classList.remove('active');
+    currentStep = 1;
+    document.getElementById('step1').classList.add('active');
+    updateProgress(1);
+  }
+</script>
+
+</body>
+</html>
